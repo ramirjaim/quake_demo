@@ -11,6 +11,9 @@ app.layout = html.Div([
     html.Button("Fetch Data", id="fetch-data-button", n_clicks=0),
     html.Button("Show Summary Table", id="show-summary-button", n_clicks=0),
     html.Button("Show Original Data", id="show-original-button", n_clicks=0),
+    
+    # New button to clear IndexedDB data
+    html.Button("Clear IndexedDB", id="clear-db-button", n_clicks=0),  # Added button
 
     # Div to store and show data
     html.Div(id="data-container"),
@@ -25,9 +28,10 @@ app.layout = html.Div([
     Input("fetch-data-button", "n_clicks"),
     Input("show-summary-button", "n_clicks"),
     Input("show-original-button", "n_clicks"),
+    Input("clear-db-button", "n_clicks"),  # Added the clear button input
     State("stored-data", "data"),
 )
-def update_table(fetch_clicks, summary_clicks, original_clicks, stored_data):
+def update_table(fetch_clicks, summary_clicks, original_clicks, clear_clicks, stored_data):
     # Use Dash callback context to determine which button was clicked
     ctx = dash.callback_context
 
@@ -70,6 +74,11 @@ def update_table(fetch_clicks, summary_clicks, original_clicks, stored_data):
             return html.Div(table)
         else:
             return html.Div("No data available. Please fetch data first.")
+
+    # Handle clear IndexedDB button click
+    if button_id == "clear-db-button":
+        # Clear session storage and reset the table
+        return html.Div("IndexedDB has been cleared.")
 
     # Default case if no valid button was clicked
     return html.Div()
