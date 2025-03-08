@@ -1,0 +1,41 @@
+/* Style the entire table */
+table {
+    width: 100%;
+    border-collapse: collapse; /* Collapses the borders into a single line */
+    margin: 20px 0; /* Add some space above and below the table */
+}
+
+/* Style table headers */
+th {
+    background-color: #4CAF50; /* Green background for the header */
+    color: white; /* White text color */
+    text-align: left; /* Align the text to the left */
+    padding: 8px; /* Add some padding inside the header cells */
+}
+
+/* Style table data cells */
+td {
+    text-align: left; /* Align the text to the left */
+    padding: 8px; /* Add padding inside the cells */
+    border-bottom: 1px solid #ddd; /* Light gray border below each row */
+}
+th {
+    text-align: left; /* Align the text to the left */
+    padding: 8px; /* Add padding inside the cells */
+    border-bottom: 1px solid #ddd; /* Light gray border below each row */
+    background-color: rgb(105, 109, 110);
+}
+/* Add some hover effect on rows */
+tr:hover {
+    background-color: #f2f2f2; /* Light gray background when hovering over a row */
+}
+
+/* Style for even rows */
+tr:nth-child(even) {
+    background-color: #f9f9f9; /* Light gray background for even rows */
+}
+
+/* Add a border to the table */
+table, th, td {
+    border: 1px solid #234951; /* Light gray border around table, headers, and cells */
+}

@@ -2,8 +2,9 @@ const observer = new MutationObserver(function() {
     const fetchButton = document.getElementById("fetch-data-button");
     const summaryButton = document.getElementById("show-summary-button");
     const originalButton = document.getElementById("show-original-button");
+    const clearButton = document.getElementById("clear-db-button"); // Added for clearing IndexedDB
 
-    if (fetchButton && summaryButton && originalButton) {
+    if (fetchButton && summaryButton && originalButton && clearButton) {
         observer.disconnect();  // Stop observing once the buttons are found
 
         // Add event listener to fetch data button
@@ -98,15 +99,40 @@ const observer = new MutationObserver(function() {
 
                 request.onsuccess = function() {
                     const earthquakes = request.result;
-                    let table = "<table><tr><th>ID</th><th>Location</th><th>Magnitude</th><th>magType</th></tr>";
+                    let table = "<table><tr><th>ID</th><th>Location</th><th>Magnitude</th><th>magType</th><th>Time</th></tr>";
 
                     earthquakes.forEach(function(earthquake) {
-                        table += `<tr><td>${earthquake.id}</td><td>${earthquake.properties.place}</td><td>${earthquake.properties.mag}</td><td>${earthquake.properties.magType}</td></tr>`;
+                        const time = new Date(earthquake.properties.time); // Convert Unix timestamp to Date object
+                        const formattedTime = time.toLocaleString(); // Format as a readable string
+
+                        table += `<tr><td>${earthquake.id}</td><td>${earthquake.properties.place}</td><td>${earthquake.properties.mag}</td><td>${earthquake.properties.magType}</td><td>${formattedTime}</td></tr>`;
                     });
                     table += "</table>";
 
                     // Display the original data table
                     document.getElementById("data-container").innerHTML = table;
+                };
+            };
+        });
+
+        // Add event listener to clear IndexedDB button
+        clearButton.addEventListener("click", function() {
+            const dbRequest = indexedDB.open("EarthquakeData", 1);
+
+            dbRequest.onsuccess = function() {
+                const db = dbRequest.result;
+                const transaction = db.transaction("earthquakes", "readwrite");
+                const store = transaction.objectStore("earthquakes");
+
+                const clearRequest = store.clear();  // Clears all data in the object store
+
+                clearRequest.onsuccess = function() {
+                    alert("IndexedDB has been cleared.");
+                    document.getElementById("data-container").innerHTML = "";  // Clear the data container
+                };
+
+                clearRequest.onerror = function() {
+                    alert("Error clearing IndexedDB.");
                 };
             };
         });
@@ -129,10 +155,13 @@ function showEarthquakesByMagType(magType) {
                 return earthquake.properties.magType === magType;
             });
 
-            let table = "<table><tr><th>ID</th><th>Location</th><th>Magnitude</th><th>magType</th></tr>";
+            let table = "<table><tr><th>ID</th><th>Location</th><th>Magnitude</th><th>magType</th><th>Time</th></tr>";
 
             filteredEarthquakes.forEach(function(earthquake) {
-                table += `<tr><td>${earthquake.id}</td><td>${earthquake.properties.place}</td><td>${earthquake.properties.mag}</td><td>${earthquake.properties.magType}</td></tr>`;
+                const time = new Date(earthquake.properties.time); // Convert Unix timestamp to Date object
+                const formattedTime = time.toLocaleString(); // Format as a readable string
+
+                table += `<tr><td>${earthquake.id}</td><td>${earthquake.properties.place}</td><td>${earthquake.properties.mag}</td><td>${earthquake.properties.magType}</td><td>${formattedTime}</td></tr>`;
             });
             table += "</table>";
 
@@ -144,10 +173,13 @@ function showEarthquakesByMagType(magType) {
 
 // Function to display the fetched data as a table
 function displayFetchedData(fetchedData) {
-    let table = "<table><tr><th>ID</th><th>Location</th><th>Magnitude</th><th>magType</th></tr>";
+    let table = "<table><tr><th>ID</th><th>Location</th><th>Magnitude</th><th>magType</th><th>Time</th></tr>";
 
     fetchedData.forEach(function(earthquake) {
-        table += `<tr><td>${earthquake.id}</td><td>${earthquake.properties.place}</td><td>${earthquake.properties.mag}</td><td>${earthquake.properties.magType}</td></tr>`;
+        const time = new Date(earthquake.properties.time); // Convert Unix timestamp to Date object
+        const formattedTime = time.toLocaleString(); // Format as a readable string
+
+        table += `<tr><td>${earthquake.id}</td><td>${earthquake.properties.place}</td><td>${earthquake.properties.mag}</td><td>${earthquake.properties.magType}</td><td>${formattedTime}</td></tr>`;
     });
 
     table += "</table>";
